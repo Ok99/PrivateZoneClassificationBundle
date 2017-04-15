@@ -1,0 +1,43 @@
+{% extends 'Ok99PrivateZoneAdminBundle:CRUD:list.html.twig' %}
+
+{% import _self as tree %}
+{% macro categories(categories, admin, rootPages, current_context) %}
+    <ul {% if rootPages %} class="page-tree"{% endif %}>
+        {% for category in categories if (not category.parent or not rootPages)%}
+            <li class="sonata-ba-list-field" objectid="{{ category.id }}">
+                <div class="page-tree__item" objectid="{{ category.id }}">
+                    {% if category.parent %}<i class="fa fa-caret-right"></i>{% endif %}
+                    <i class="fa page-tree__item__is-hybrid"></i>
+                    {% if app.request.xmlHttpRequest %}
+                        <a href="{{ admin.generateObjectUrl('edit', category) }}" class="sonata-tree__item__edit sonata-link-identifier">{{ category.name }}</a>
+                    {% else %}
+                        {% if category.parent %}
+                            <a href="{{ admin.generateObjectUrl('edit', category) }}" class="sonata-link-identifier">{{ category.name }}</a>
+                            <a class="label label-default pull-right" href="{{ admin.generateObjectUrl('edit', category) }}">edit <i class="fa fa-magic"></i></a>
+                        {% else %}
+                            {{ category.name }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% if category.children|length %}
+                    {{ _self.categories(category.children, admin, false) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% block tab_menu %}
+{% endblock %}
+
+{% block list_table %}
+    <div class="box box-primary">
+        <div class="box-header">
+            <h2>&nbsp;</h2>
+        </div>
+        <div class="box-content">
+            {#{{tree.categories(root_categories, admin, true)}}#}
+            {{tree.categories(admin.datagrid.results, admin, true)}}
+        </div>
+    </div>
+{% endblock %}
