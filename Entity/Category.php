@@ -6,8 +6,8 @@ use Sonata\ClassificationBundle\Entity\BaseCategory as BaseCategory;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="classification__category")
+ * @ORM\Entity(repositoryClass="Ok99\PrivateZoneCore\ClassificationBundle\Entity\Repository\CategoryRepository")
  */
 class Category extends BaseCategory
 {
