@@ -2,6 +2,8 @@
 
 namespace Ok99\PrivateZoneCore\ClassificationBundle\Entity;
 
+use Ok99\PrivateZoneCore\MediaBundle\Entity\Media;
+use Ok99\PrivateZoneCore\UserBundle\Entity\User;
 use Sonata\ClassificationBundle\Entity\BaseCategory as BaseCategory;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,8 +39,17 @@ class Category extends BaseCategory
      */
     protected $media;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Ok99\PrivateZoneCore\UserBundle\Entity\User")
+     * @ORM\JoinTable(name="classification__category__users",
+     *      joinColumns={@ORM\JoinColumn(name="classification__category__id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="RESTRICT")})
+     */
+    private $allowedUsers;
+
     public function __construct()
     {
+        $this->allowedUsers = new \Doctrine\Common\Collections\ArrayCollection();
         $this->enabled = true;
     }
 
@@ -129,5 +140,44 @@ class Category extends BaseCategory
     public function getMedia()
     {
         return $this->media;
+    }
+
+
+    /**
+     * Add allowedUser
+     *
+     * @param \Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser
+     * @return Category
+     */
+    public function addAllowedUser(\Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser)
+    {
+        $this->allowedUsers[] = $allowedUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove allowedUser
+     *
+     * @param \Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser
+     */
+    public function removeAllowedUser(\Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser)
+    {
+        $this->allowedUsers->removeElement($allowedUser);
+    }
+
+    /**
+     * Get allowedUsers
+     *
+     * @return User[]
+     */
+    public function getAllowedUsers()
+    {
+        $allowedUsers = $this->allowedUsers->getValues();
+
+        $collator = new \Collator('cs_CZ');
+        $collator->sort($allowedUsers);
+
+        return $allowedUsers;
     }
 }

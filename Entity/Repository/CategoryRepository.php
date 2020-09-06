@@ -5,6 +5,7 @@ namespace Ok99\PrivateZoneCore\ClassificationBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Ok99\PrivateZoneCore\ClassificationBundle\Entity\Category;
+use Ok99\PrivateZoneCore\UserBundle\Entity\User;
 
 /**
  * CategoryRepository
@@ -44,14 +45,25 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
+     * @param User|null $user
      * @return Category[]
      */
-    public function getDocumentsCategories()
+    public function getDocumentsCategories($user = null)
     {
         try {
-            return $this->createDocumentsQuery()
+            $categories = $this->createDocumentsQuery()
                 ->getQuery()
                 ->getResult();
+
+            if ($user) {
+                $categories = array_filter($categories, function (Category $category) use ($user) {
+                    return
+                        !$category->getAllowedUsers()
+                        || in_array($user, $category->getAllowedUsers());
+                });
+            }
+
+            return $categories;
         } catch (NoResultException $e) {
             return [];
         }
