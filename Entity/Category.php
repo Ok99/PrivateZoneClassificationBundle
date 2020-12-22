@@ -52,7 +52,7 @@ class Category extends BaseCategory
      *
      * @ORM\Column(name="is_notifiable", type="boolean")
      */
-    private $isNotifiable = false;
+    private $isNotifiable = true;
 
     /**
      * Category constructor.
