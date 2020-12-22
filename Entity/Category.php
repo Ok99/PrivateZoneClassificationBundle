@@ -47,6 +47,16 @@ class Category extends BaseCategory
      */
     private $allowedUsers;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_notifiable", type="boolean")
+     */
+    private $isNotifiable = false;
+
+    /**
+     * Category constructor.
+     */
     public function __construct()
     {
         $this->allowedUsers = new \Doctrine\Common\Collections\ArrayCollection();
@@ -179,5 +189,28 @@ class Category extends BaseCategory
         $collator->sort($allowedUsers);
 
         return $allowedUsers;
+    }
+
+    /**
+     * Set isNotifiable
+     *
+     * @param boolean $isNotifiable
+     * @return Category
+     */
+    public function setIsNotifiable(bool $isNotifiable)
+    {
+        $this->isNotifiable = $isNotifiable;
+
+        return $this;
+    }
+
+    /**
+     * Get isNotifiable
+     *
+     * @return boolean
+     */
+    public function getIsNotifiable()
+    {
+        return $this->isNotifiable;
     }
 }

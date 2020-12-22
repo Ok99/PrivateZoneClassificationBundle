@@ -31,6 +31,7 @@ class CategoryRepository extends EntityRepository
 
     /**
      * @return Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getDocumentsCategory()
     {
@@ -67,5 +68,17 @@ class CategoryRepository extends EntityRepository
         } catch (NoResultException $e) {
             return [];
         }
+    }
+
+    /**
+     * @param User|null $user
+     * @return Category[]
+     */
+    public function getNotifiableDocumentsCategories($user = null)
+    {
+        $categories = $this->getDocumentsCategories($user);
+        return array_filter($categories, function (Category $category) {
+            return $category->getIsNotifiable();
+        });
     }
 }
