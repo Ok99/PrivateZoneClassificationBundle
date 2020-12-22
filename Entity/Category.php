@@ -2,7 +2,7 @@
 
 namespace Ok99\PrivateZoneCore\ClassificationBundle\Entity;
 
-use Ok99\PrivateZoneCore\MediaBundle\Entity\Media;
+use Doctrine\Common\Collections\ArrayCollection;
 use Ok99\PrivateZoneCore\UserBundle\Entity\User;
 use Sonata\ClassificationBundle\Entity\BaseCategory as BaseCategory;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,6 +40,14 @@ class Category extends BaseCategory
     protected $media;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Ok99\PrivateZoneCore\UserBundle\Entity\User", inversedBy="notifyDocumentCategories"))
+     * @ORM\JoinTable(name="user_notify_document_categories",
+     *      joinColumns={@ORM\JoinColumn(name="document_category_id", referencedColumnName="id")})
+     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     */
+    private $notifyRecipients;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Ok99\PrivateZoneCore\UserBundle\Entity\User")
      * @ORM\JoinTable(name="classification__category__users",
      *      joinColumns={@ORM\JoinColumn(name="classification__category__id", referencedColumnName="id", onDelete="CASCADE")},
@@ -59,7 +67,8 @@ class Category extends BaseCategory
      */
     public function __construct()
     {
-        $this->allowedUsers = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notifyRecipients = new ArrayCollection();
+        $this->allowedUsers = new ArrayCollection();
         $this->enabled = true;
     }
 
@@ -152,14 +161,13 @@ class Category extends BaseCategory
         return $this->media;
     }
 
-
     /**
      * Add allowedUser
      *
-     * @param \Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser
+     * @param User $allowedUser
      * @return Category
      */
-    public function addAllowedUser(\Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser)
+    public function addAllowedUser(User $allowedUser)
     {
         $this->allowedUsers[] = $allowedUser;
 
@@ -169,9 +177,9 @@ class Category extends BaseCategory
     /**
      * Remove allowedUser
      *
-     * @param \Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser
+     * @param User $allowedUser
      */
-    public function removeAllowedUser(\Ok99\PrivateZoneCore\UserBundle\Entity\User $allowedUser)
+    public function removeAllowedUser(User $allowedUser)
     {
         $this->allowedUsers->removeElement($allowedUser);
     }
@@ -212,5 +220,36 @@ class Category extends BaseCategory
     public function getIsNotifiable()
     {
         return $this->isNotifiable;
+    }
+
+    /**
+     * Add notifyRecipients
+     *
+     * @param User $notifyRecipients
+     * @return Category
+     */
+    public function addNotifyRecipients(User $notifyRecipients)
+    {
+        $this->notifyRecipients[] = $notifyRecipients;
+
+        return $this;
+    }
+
+    /**
+     * Remove notifyRecipients
+     *
+     * @param User $notifyRecipients
+     */
+    public function removeNotifyRecipients(User $notifyRecipients)
+    {
+        $this->notifyRecipients->removeElement($notifyRecipients);
+    }
+
+    /**
+     * @return ArrayCollection|User[]
+     */
+    public function getNotifyRecipients()
+    {
+        return $this->notifyRecipients;
     }
 }
