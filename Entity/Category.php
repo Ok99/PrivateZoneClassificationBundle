@@ -193,8 +193,10 @@ class Category extends BaseCategory
     {
         $allowedUsers = $this->allowedUsers->getValues();
 
-        $collator = new \Collator('cs_CZ');
-        $collator->sort($allowedUsers);
+        if ($allowedUsers) {
+            $collator = new \Collator('cs_CZ');
+            $collator->sort($allowedUsers);
+        }
 
         return $allowedUsers;
     }
