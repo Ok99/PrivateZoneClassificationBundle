@@ -254,4 +254,18 @@ class Category extends BaseCategory
     {
         return $this->notifyRecipients;
     }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasNotifyRecipient(User $user)
+    {
+        foreach ($this->getNotifyRecipients() as $recipient) {
+            if ($recipient->getId() == $user->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
